@@ -88,7 +88,9 @@ h1 {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
+  max-width: 100%;
 }
+
 
 .iama {
   max-width: 100%;
