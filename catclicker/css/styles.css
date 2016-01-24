@@ -1,0 +1,15 @@
+body {
+background: white;
+}
+
+ #kitten1 {
+ 	height: 426px;
+ 	width: 640px;
+	background-image: url(../img/kitten1.jpg);
+}
+
+ #kitten2 {
+ 	height: 426px;
+ 	width: 640px;
+	background-image: url(../img/kitten2.jpg);
+}
