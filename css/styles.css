@@ -1,60 +1,54 @@
 body {
-	font-family: 'Lato', sans-serif;
-	color: #747704;
-	
-	font-weight: 300;
+    font-family: 'Lato', sans-serif;
+    color: #747704;
+    font-weight: 300;
 }
 
 h1 {
-	font-size: 4em;
+    font-size: 4em;
 }
 
-
 .logo {
-	color: #fff;
-	font-family: 'Shadows Into Light', cursive;
-	font-size: 3.4em;
+    color: #fff;
+    font-family: 'Shadows Into Light', cursive;
+    font-size: 3.4em;
 }
 
 .circle {
-	background-color: #0066ff;
- 	height: 7em;
- 	border-radius: 50%;
- 	margin-top: 1em;
- 	padding-top: 1em; 
- 	text-align: center;
- 	width: 7em;
+    background-color: #0066ff;
+    height: 7em;
+    border-radius: 50%;
+    margin-top: 1em;
+    padding-top: 1em;
+    text-align: center;
+    width: 7em;
 }
 
-
 hr {
-	background: #BCBBBB;
+    background: #BCBBBB;
     height: 3px;
 }
 
 .featured-works {
-	color: #bcbbbb;
+    color: #bcbbbb;
 }
 
-
-
 .featured-box {
-	transform: scale(1);
-	transition: .3s ease-in-out;
+    transform: scale(1);
+    transition: .3s ease-in-out;
 }
 
 .featured-box:hover {
-	transform: scale(1.05);
+    transform: scale(1.05);
 }
 
-
 .modal-image {
-	margin-left:1em;
-	margin-bottom: 1em;
+    margin-left: 1em;
+    margin-bottom: 1em;
 }
 
 @media only screen and (min-width:750px) {
     .container {
-      max-width: 750px;
-    }
+        max-width: 750px;
+    };
 }
