@@ -76,6 +76,12 @@ Feeling uninspired by the portfolio? Here's a list of cool portfolios I found af
 ---------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------
 
+NOTE: I have been getting 97/96 from page speed insights from my fastkite.github.com even before removing the extra fonts.
+I removed them, as it is clear they will increase the page load speed, but either way I am unable to get a low rating from
+tool.  I am submitting the project as a github repo this time incase the server you are using has slow response time (as
+seen on the screenshot).
+
+
 ### Optimizations I made to views/js/main.js
 
 Changed querySelectorAll to getElementsByClassName where possible
@@ -107,6 +113,8 @@ reduced the number of sliding pizzas from 200 to 24
 
 ### Steps required to run this application
 
+you can access the site directly on my github by opening a web browser to http://fastkite.github.com
+
 Unzip all the files to the root of a web server such as Appache, or IIS.
 Open a web brower to the address of your server for example: www.mywebserver.com
 If you do not have a web server but are on a Mac, or possibly other operating systems with python installed, you can run this command from within the folder where the files were unzipped.
@@ -114,5 +122,11 @@ If you do not have a web server but are on a Mac, or possibly other operating sy
 python -m SimpleHTTPServer 8080
 
 Then you can open your web browser to http://localhost:8080 to access the application
+
+Click on Cam's Pizzeria
+Adjust the slider to change the size of your pizza
+Scroll up and down the page to see all the differnt pizzas you can order
+
+
 
 
