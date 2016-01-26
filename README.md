@@ -32,7 +32,7 @@ Profile, optimize, measure... and then lather, rinse, and repeat. Good luck!
 
 ####Part 2: Optimize Frames per Second in pizza.html
 
-To optimize views/pizza.html, you will need to modify views/js/main.js until your frames per second rate is 60 fps or higher. You will find instructive comments in main.js. 
+To optimize views/pizza.html, you will need to modify views/js/main.js until your frames per second rate is 60 fps or higher. You will find instructive comments in main.js.
 
 You might find the FPS Counter/HUD Display useful in Chrome developer tools described here: [Chrome Dev Tools tips-and-tricks](https://developer.chrome.com/devtools/docs/tips-and-tricks).
 
@@ -71,3 +71,25 @@ Feeling uninspired by the portfolio? Here's a list of cool portfolios I found af
 * <a href="http://nicoledominguez.com/portfolio/">http://nicoledominguez.com/portfolio/</a>
 * <a href="http://www.roxannecook.com/">http://www.roxannecook.com/</a>
 * <a href="http://www.84colors.com/portfolio.html">http://www.84colors.com/portfolio.html</a>
+
+---------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------
+
+### Optimizations I made to views/js/main.js
+
+Changed querySelectorAll to getElementsByClassName where possible
+
+made this variable only called once instead of many times over window.items = document.getElementsByClassName('mover');
+
+cached this value: var scrollTop = document.body.scrollTop;
+
+pre-calculated these 5 phases phases.push(Math.sin((scrollTop / 1250) + i));
+
+fetched the current phase this value var phase = phases[i % 5];
+
+switched to using this items[i].style.transform instead of basicLeft to avoid new layout requirement
+
+changePizzaSizes() was not using percentages, changed it to use column sizes of 25%, 33.3%, 50%
+
+determineDx() was removed, and it's functionallity integrated into changePizzaSizes()
