@@ -73,10 +73,9 @@ Feeling uninspired by the portfolio? Here's a list of cool portfolios I found af
 * <a href="http://www.84colors.com/portfolio.html">http://www.84colors.com/portfolio.html</a>
 
 ---------------------------------------------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------
 
-NOTE: I have been getting 97/96 from page speed insights from my fastkite.github.com even before removing the extra fonts.
+### NOTE: 
+I have been getting 97/96 from page speed insights from my fastkite.github.com even before removing the extra fonts.
 I removed them, as it is clear they will increase the page load speed, but either way I am unable to get a low rating from
 tool.  I am submitting the project as a github repo this time incase the server you are using has slow response time (as
 seen on the screenshot).
@@ -84,48 +83,39 @@ seen on the screenshot).
 
 ### Optimizations I made to views/js/main.js
 
-Changed querySelectorAll to getElementsByClassName where possible
+* Changed querySelectorAll to getElementsByClassName where possible
 
-made this variable only called once instead of many times over window.items = document.getElementsByClassName('mover');
+* Made this variable only called once instead of many times over window.items = document.getElementsByClassName('mover');
 
-cached this value: var scrollTop = document.body.scrollTop;
+* Cached this value: var scrollTop = document.body.scrollTop;
 
-pre-calculated these 5 phases phases.push(Math.sin((scrollTop / 1250) + i));
+* Pre-calculated these 5 phases phases.push(Math.sin((scrollTop / 1250) + i));
 
-fetched the current phase this value var phase = phases[i % 5];
+* Fetched the current phase this value var phase = phases[i % 5];
 
-switched to using this items[i].style.transform instead of basicLeft to avoid new layout requirement
+* Switched to using this items[i].style.transform instead of basicLeft to avoid new layout requirement
 
-changePizzaSizes() was not using percentages, changed it to use column sizes of 25%, 33.3%, 50%
+* changePizzaSizes() was not using percentages, changed it to use column sizes of 25%, 33.3%, 50%
 
-determineDx() was removed, and it's functionallity integrated into changePizzaSizes()
+* determineDx() was removed, and it's functionallity integrated into changePizzaSizes()
 
-removed from the loop var pizzasDiv = document.getElementById("randomPizzas");
+* removed from the loop var pizzasDiv = document.getElementById("randomPizzas");
 
-change getElementById() from querySelector() where possible
+* change getElementById() from querySelector() where possible
 
-reduced the number of sliding pizzas from 200 to 24
+* reduced the number of sliding pizzas from 200 to 24
 
- moved var movingPizzas = document.getElementById("movingPizzas"); outside the loop
+* moved var movingPizzas = document.getElementById("movingPizzas"); outside the loop
 
- added to mover class: transform: translateZ(0); so all pizzas paint on their own layer
+* added to mover class: transform: translateZ(0); so all pizzas paint on their own layer
 
 
 ### Steps required to run this application
 
-you can access the site directly on my github by opening a web browser to http://fastkite.github.com
-
-Unzip all the files to the root of a web server such as Appache, or IIS.
-Open a web brower to the address of your server for example: www.mywebserver.com
-If you do not have a web server but are on a Mac, or possibly other operating systems with python installed, you can run this command from within the folder where the files were unzipped.
-
-python -m SimpleHTTPServer 8080
-
-Then you can open your web browser to http://localhost:8080 to access the application
-
-Click on Cam's Pizzeria
-Adjust the slider to change the size of your pizza
-Scroll up and down the page to see all the differnt pizzas you can order
+1. you can access the site directly on my github by opening a web browser to http://fastkite.github.com
+2. Click on Cam's Pizzeria
+3. Adjust the slider to change the size of your pizza
+4. Scroll up and down the page to see all the differnt pizzas you can order
 
 
 
