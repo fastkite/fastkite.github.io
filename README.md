@@ -93,3 +93,26 @@ switched to using this items[i].style.transform instead of basicLeft to avoid ne
 changePizzaSizes() was not using percentages, changed it to use column sizes of 25%, 33.3%, 50%
 
 determineDx() was removed, and it's functionallity integrated into changePizzaSizes()
+
+removed from the loop var pizzasDiv = document.getElementById("randomPizzas");
+
+change getElementById() from querySelector() where possible
+
+reduced the number of sliding pizzas from 200 to 24
+
+ moved var movingPizzas = document.getElementById("movingPizzas"); outside the loop
+
+ added to mover class: transform: translateZ(0); so all pizzas paint on their own layer
+
+
+### Steps required to run this application
+
+Unzip all the files to the root of a web server such as Appache, or IIS.
+Open a web brower to the address of your server for example: www.mywebserver.com
+If you do not have a web server but are on a Mac, or possibly other operating systems with python installed, you can run this command from within the folder where the files were unzipped.
+
+python -m SimpleHTTPServer 8080
+
+Then you can open your web browser to http://localhost:8080 to access the application
+
+
