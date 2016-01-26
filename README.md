@@ -112,7 +112,7 @@ seen on the screenshot).
 
 ### Steps required to run this application
 
-1. you can access the site directly on my github by opening a web browser to http://fastkite.github.com
+1. you can access the site directly on my github by opening a web browser to http://fastkite.github.io
 2. Click on Cam's Pizzeria
 3. Adjust the slider to change the size of your pizza
 4. Scroll up and down the page to see all the differnt pizzas you can order.
