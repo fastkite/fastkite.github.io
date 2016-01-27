@@ -17,16 +17,23 @@
                 Search
             </div>
             <div class="col-xs-11 col-sm-11 col-md-11">
-                <input type="text">
+                <form>
+                    <input type="text" data-bind="textInput: searchText" >
+
+
+                    <button data-bind="click: filterAirports">Filter</button>
+                </form>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-3 col-sm-3 col-md-3">
-                <ul>
-                    <li>Brampton</li>
-                    <li>Toronto</li>
-                    <li>Mississauga</li>
+
+                <ul data-bind="foreach: visibleAirports">
+                    <li>
+                        <span data-bind="text: name"></span> (<span data-bind="text: airportID"></span>)
+                    </li>
                 </ul>
+
             </div>
             <div id="map" class="col-xs-9 col-sm-9 col-md-9">
 
@@ -35,8 +42,11 @@
     </div>
 
 <div ></div>
-
-    <script src="js/main.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M&callback=initMap"></script>
+    <script src="js/knockout-3.4.0.js"></script>
+    <script src="js/main.js"></script>
+
+
+
   </body>
 </html>
