@@ -27,7 +27,7 @@ $(document).ready(function() {
     $.ajax({
         type: 'GET',
         url: fxml_url + 'SearchBirdseyeInFlight',
-        data: { 'query': '{range lat 36.897669 40.897669} {range lon -79.03655 -75.03655}', 'howMany': 2, 'offset': 0 },
+        data: { 'query': '{range lat 43.0 44.0} {range lon -78.7 -80.7}', 'howMany': 2, 'offset': 0 },
         success : function(result) {
             if (result.error) {
                 alert('Failed to fetch flight: ' + result.error);
