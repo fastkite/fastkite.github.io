@@ -441,7 +441,6 @@ var ViewModel = function (map, airportsJSON) {
     // Create a click handler function (helps keep things clean)
     self.clickHandler = function(airport) {
 
-
         // Zoom in a bit
         self.googleMap.setZoom(16);
 
@@ -454,8 +453,6 @@ var ViewModel = function (map, airportsJSON) {
         // Open the Info Window
         //self.infoWindow.open(self.map, venue.marker);
 
-        // Call the Panoramio API
-        //self.wikipedia(venue);
 
         // Use an IIFE to make markers dance ^_^
         (function() {
