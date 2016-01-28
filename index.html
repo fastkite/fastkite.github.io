@@ -9,17 +9,32 @@
         <link rel="stylesheet" href="css/styles.css">
     </head>
     <body>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-xs-1 col-sm-1 col-md-1">
-                 Search
-            </div>
-            <div class="col-xs-11 col-sm-11 col-md-11">
-                <form>
-                    <input type="text" data-bind="textInput: searchText" >
+            <div class="search">
+                <form class="form" role="search">
+                    <div class="form-group">
+                        <input class="form-control" type="text" data-bind="textInput: searchText" autocomplete="off" type="search" placeholder="Search for an airport">
+
+                    </div>
                 </form>
             </div>
+
         </div>
+        <div class="row">
+            <div>
+                <ul class="list-group airport" data-bind="foreach: visibleAirports">
+                    <li class="list-group-item" data-bind="text: displayname, click: $parent.clickHandler"></li>  <!-- click: $parent.clickHandler -->
+                </ul>
+            </div>
+            <div>
+                <div id="map"></div>
+            </div>
+
+        </div>
+
+<!--
+
         <div class="row">
             <div class="col-xs-3 col-sm-3 col-md-3">
 
@@ -34,8 +49,10 @@
 
             </div>
         </div>
+-->
+
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
+            <div>
                     <a href="https://mapicons.mapsmarker.com"><img src="https://mapicons.mapsmarker.com/wp-content/uploads/2011/03/miclogo-88x31.gif"></a>
             </div>
         </div>

@@ -438,6 +438,39 @@ var ViewModel = function (map, airportsJSON) {
     }
 
 
+    // Create a click handler function (helps keep things clean)
+    self.clickHandler = function(airport) {
+
+
+        // Zoom in a bit
+        self.googleMap.setZoom(16);
+
+        // Pan to coordinates
+        self.googleMap.panTo(airport.latLng);
+
+        // Set the Info Window
+        //self.infoWindow.setContent(self.contentBox(airport));
+
+        // Open the Info Window
+        //self.infoWindow.open(self.map, venue.marker);
+
+        // Call the Panoramio API
+        //self.wikipedia(venue);
+
+        // Use an IIFE to make markers dance ^_^
+        (function() {
+            if (airport.marker.getAnimation() !== null) {
+                airport.marker.setAnimation(null);
+            } else {
+                airport.marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function() {
+                    airport.marker.setAnimation(null);
+                }, 700); // Default timeout that Google Maps uses for it's markers
+            }
+        })();
+    };
+
+
 };
 
 

@@ -1,2 +1,133 @@
-html, body { height: 100%; margin: 0; padding: 0; }
+/*html, body { height: 100%; margin: 0; padding: 0; }
       #map { height: 500px; }
+
+*/
+
+
+
+
+body {
+	font-family: sans-serif;
+	color: gray;
+	margin: 20px;
+	background-color: #444444;
+}
+
+
+form {
+	padding-right: 0;
+	padding-left: 0;
+}
+
+li {
+	cursor: pointer;
+}
+
+li:hover {
+	color: blue;
+}
+
+.airport {
+	position: absolute;
+	overflow-y: auto;
+	z-index: 1;
+	top: 150px;
+	left: 50px;
+	height: 500px;
+	border-radius: 10px;
+}
+
+#map {
+	height: 700px;
+	width: auto;
+	border-radius: 10px;
+}
+
+.form-control {
+	border-radius: 10px;
+}
+
+
+/*
+@media only screen and (max-width: 768px) {
+
+	.airport {
+		font-size: small;
+	}
+
+	#map{
+		height: 900px;
+		width: auto;
+	}
+}
+
+
+@media only screen and (max-width: 600px) {
+
+	.airport {
+		position: absolute;
+		height: 180px;
+		left: 25px;
+		top: 400px;
+		width: 90px;
+		font-size: smaller;
+	}
+
+	#map {
+		height: 550px;
+		width: auto;
+	}
+
+
+
+
+}
+
+@media only screen and (max-width: 690px) and (max-height: 387px) {
+
+	#map {
+		height: 350px;
+		width: auto;
+	}
+
+	.airport{
+		top: 75px;
+		height: 200px;
+		font-size: small;
+		width: 135px;
+	}
+
+
+}
+
+
+@media only screen and (max-width: 384px) and (max-height: 567px) {
+
+	.airport {
+		top: 400px;
+		height: 130px;
+		font-size: smaller;
+	}
+
+	#map {
+		height: 500px;
+	}
+
+
+}
+
+@media only screen and (max-width: 600px) and (max-height: 360px) {
+
+	#map {
+		height: 280px;
+		width: auto;
+	}
+
+	.airport{
+		top: 75px;
+	}
+
+
+}
+
+*/
