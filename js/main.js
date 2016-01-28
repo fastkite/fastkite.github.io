@@ -214,7 +214,7 @@ var ViewModel = function (map, airportsJSON) {
     });
 
 
-
+    // create observable for the text entered during search
 	self.searchText = ko.observable('');
 
 	// setup a subscription to when self.searchText changes value
