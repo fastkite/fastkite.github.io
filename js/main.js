@@ -12,12 +12,46 @@
 /* 11917c6bed5c9ba59cb414745683ac7821a22089 */
 
 
+
+/* map icons came from */
+/* Please credit: Maps Icons Collection https://mapicons.mapsmarker.com */
+
+// define our neighbourhood box
+/* top left 43.8, -79.9 */
+/* bottom right 43.6, -79.1 */
+
+
+const LAT_TOP = 43.8;
+const LAT_BOTTOM = 43.6;
+const LONG_LEFT = -79.9;
+const LONG_RIGHT = -79.1;
+const MAP_ZOOM = 11;
+
+
+/* larger version of the map  that uses all the airports imported in airportsJSONGlobal */
 /* map top left 44.0, -80.7 */
 /* bottom right 43.0, -78.7 */
-/* map center 43.5, -79.7 */
 
+/*
+const LAT_TOP = 44.0;
+const LAT_BOTTOM = 43.0;
+const LONG_LEFT = -80.7;
+const LONG_RIGHT = -78.7;
+const MAP_ZOOM = 9;
+*/
 
+// define the center of the map
+var mapCentre = {lat: (LAT_TOP + LAT_BOTTOM)/2, lng: (LONG_LEFT + LONG_RIGHT)/2};
 
+// maximum number of airplanes to display at once (costs money to query airplanes)
+const MAX_AIRPLANES = 10;
+
+// how many minutes ago must an airplane have reported in to use it's data
+const LAST_X_MINUTES = 30;
+
+const FXML_URL = 'http://fastkite:11917c6bed5c9ba59cb414745683ac7821a22089@flightxml.flightaware.com/json/FlightXML2/';
+
+// list of airports in my area - these will be filtered based on the neighbourhood box defined earlier.  The full list of airports in the world was much too large to import here
 var airportsJSONGlobal = [
 {airportID:'0G0', latLng: {lat: 43.10319900512695, lng: -78.70330047607422}, name:'North Buffalo Suburban Airport'},
 {airportID:'61NY', latLng: {lat: 43.168701171875, lng: -78.78230285644531}, name:'Bassett Field'},
@@ -139,27 +173,37 @@ var airportsJSONGlobal = [
 ];
 
 
+function seconds_since_epoch() { return Math.floor( Date.now() / 1000 ) }
 
 
+// model of what is included in an airport
 var AirportModel = function (data) {
-	this.airportID = data.airportID;
 	this.latLng= data.latLng;
-	this.name = data.name;
-	this.listName = data.name;
+	this.displayname = data.name;
 	if (data.airportID != "") {
-		this.listName = this.listName + " (" + data.airportID + ")"
+		this.displayname = this.displayname + " (" + data.airportID + ")"
 	}
 	this.marker = null; // google maps marker
 };
 
+// model of what is included in an airplane
 var AirplaneModel = function (data) {
 	this.ident = data.ident;
+    this.fl = data.altitude;
 	this.origin = data.origin;
 	this.destination = data.destination;
-	this.latLng= {lat: data.latitude, lng: data.longitude};
+    // shuffle airplanes around as lat/long precision is not very good from FlightAware
+    var lat_offset = (Math.random()-0.5)*0.03;
+    var lng_offset = (Math.random()-0.5)*0.03;
+
+	this.latLng= {lat: data.latitude+lat_offset, lng: data.longitude + lng_offset};
 	this.type = data.type;
 	this.heading = data.heading;
+    this.groundspeed = data.groundspeed;
+    this.altitudeStatus = data.altitudeStatus;
 	this.marker = null; // google maps marker
+
+
 };
 
 
@@ -170,13 +214,47 @@ var ViewModel = function (map, airportsJSON) {
 	var self = this;
 	self.googleMap = map;
 
+    // define a marker for airplanes
+    self.airplaneImage = {
+        url: 'mapicons/airport.png',
+        // This marker is 32 pixels wide by 37 pixels high.
+        size: new google.maps.Size(32, 37),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the pin.
+        anchor: new google.maps.Point(16, 37)
+      };
+
+    // define a marker for airports
+    self.airportImage = {
+        url: 'mapicons/airport_terminal.png',
+        // This marker is 32 pixels wide by 37 pixels high.
+        size: new google.maps.Size(32, 37),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the pin.
+        anchor: new google.maps.Point(16, 37)
+      };
+    // define the shape of a marker (clickable area)
+    self.markerShape = {
+        coords: [29,0,30,1,31,2,31,3,31,4,31,5,31,6,31,7,31,8,31,9,31,10,31,11,31,12,31,13,31,14,31,15,31,16,31,17,31,18,31,19,31,20,31,21,31,22,31,23,31,24,31,25,31,26,31,27,31,28,31,29,30,30,29,31,23,32,22,33,21,34,20,35,19,36,12,36,11,35,10,34,9,33,8,32,2,31,1,30,0,29,0,28,0,27,0,26,0,25,0,24,0,23,0,22,0,21,0,20,0,19,0,18,0,17,0,16,0,15,0,14,0,13,0,12,0,11,0,10,0,9,0,8,0,7,0,6,0,5,0,4,0,3,0,2,1,1,2,0,29,0],
+        type: 'poly'
+    };
+
+
+
 
 	// array containing all airports
 	self.allAirports = [];
 
+
+
 	// add airports into an array
 	airportsJSON.forEach(function(airportJSON) {
-        self.allAirports.push(new AirportModel(airportJSON));
+        // only add airpots in our neighbourhood box
+        if ((airportJSON.latLng.lng <= LONG_RIGHT) && (airportJSON.latLng.lng >= LONG_LEFT) && (airportJSON.latLng.lat <= LAT_TOP) && (airportJSON.latLng.lat >= LAT_BOTTOM)) {
+            self.allAirports.push(new AirportModel(airportJSON));
+        }
     });
 
 
@@ -186,13 +264,22 @@ var ViewModel = function (map, airportsJSON) {
             map: self.googleMap, // enable the marker by default
             position: airport.latLng, // specify the location
             animation: google.maps.Animation.DROP, // specify the marker animation
-            //title: airport.listName,
+
+            label: '',
+            icon: self.airportImage,
+            shape: self.shape,
 
         };
 
+
+
+
+
+
+
         // create info window content
 		var infowindow = new google.maps.InfoWindow({
-    		content: airport.listName
+    		content: airport.displayname
   		});
 
 		// add marker to airport
@@ -236,7 +323,7 @@ var ViewModel = function (map, airportsJSON) {
         	airport.marker.setMap(null);
 
            	// search in the full name and airport ID
-           	var searchIn = airport.listName.toLowerCase();
+           	var searchIn = airport.displayname.toLowerCase();
 
             if (searchIn.indexOf(searchInput) !== -1) {
                 self.visibleAirports.push(airport);
@@ -254,19 +341,32 @@ var ViewModel = function (map, airportsJSON) {
 
 	self.allAirplanes =[];
 
-	var fxml_url = 'http://fastkite:11917c6bed5c9ba59cb414745683ac7821a22089@flightxml.flightaware.com/json/FlightXML2/';
+
+
+
+        var t = seconds_since_epoch();
+        t = t - (LAST_X_MINUTES * 60); // reported last 20 minutes
+        //console.log(t);
+
 
     $.ajax({
         type: 'GET',
-        url: fxml_url + 'SearchBirdseyeInFlight',
-        data: { 'query': '{range lat 43.0 44.0} {range lon -80.7 -78.7}', 'howMany': 2, 'offset': 0 },
+        //  http://flightaware.com/commercial/flightxml/explorer search for: SearchBirdseyeInFlight
+        url: FXML_URL + 'SearchBirdseyeInFlight',
+
+        // {range lat x1 x2} {range lon y1 y2} query a specific box for airplanes range of lat and long
+        // {> lastPositionTime t} — Time when last reported position was received, or 0 if no position has been received yet. Epoch timestamp seconds since 1970.
+        // {true inAir} will verify that the airplane is still reported as in the air and not landed
+
+        data: { 'query': '{range lat '+LAT_BOTTOM+' '+LAT_TOP+'} {range lon '+LONG_LEFT+' '+LONG_RIGHT+'} {true inAir} {> lastPositionTime '+ t + '} {> alt 0}', 'howMany': MAX_AIRPLANES, 'offset': 0 },
+
         success : function(result) {
             if (result.error) {
                 alert('Failed to fetch flight: ' + result.error);
                 return;
             }
-            console.log (result);
-            console.dir (result);
+
+            //console.dir (result);
 
             var aircrafts = result.SearchBirdseyeInFlightResult.aircraft;
 
@@ -274,7 +374,9 @@ var ViewModel = function (map, airportsJSON) {
             	self.allAirplanes.push(new AirplaneModel(aircrafts[aircraft]));
             }
             self.displayAirplanes();
-            //alert('Did not find any useful flights');
+            if (allAirplanes.length===0) {
+                alert('Did not find any matching flights');
+            }
         },
         error: function(data, text) { alert('Failed to fetch flight: ' + data); },
         dataType: 'jsonp',
@@ -284,41 +386,49 @@ var ViewModel = function (map, airportsJSON) {
 
 
 
- var image = {
-    url: 'img/beachflag.png',
-    // This marker is 20 pixels wide by 32 pixels high.
-    size: new google.maps.Size(20, 32),
-    // The origin for this image is (0, 0).
-    origin: new google.maps.Point(0, 0),
-    // The anchor for this image is the base of the flagpole at (0, 32).
-    anchor: new google.maps.Point(0, 32)
-  };
-var shape = {
-    coords: [1, 1, 1, 20, 18, 20, 18, 1],
-    type: 'poly'
-  };
+
 
     self.displayAirplanes = function () {
 	    self.allAirplanes.forEach(function(airplane) {
+
+                console.log(airplane.ident  );
+                console.dir(airplane)
+                console.log (airplane.latLng.lat + ' ' + airplane.latLng.lng);
+
 	        var markerOptions = {
 	            map: self.googleMap, // enable the marker by default
 	            position: airplane.latLng, // specify the location
 	            animation: google.maps.Animation.DROP, // specify the marker animation
-	            //title: airport.listName,
 	            label: '',
-
-	            icon: image,
-      shape: shape,
-
+	            icon: self.airplaneImage,
+                shape: self.shape,
 	        };
+
+
+            var altitudeText = '';
+            if (airplane.altitudeStatus == '-') {
+                altitudeText='Level at ';
+            } else if (airplane.altitudeStatus == 'C') {
+                altitudeText='Climbing through ';
+            } else if (airplane.altitudeStatus == 'D') {
+                altitudeText='Descending through ';
+            } else {
+                altitudeText= 'Unknown status "' + airplane.altitudeStatus+ '" at ';
+            }
+
+            altitudeText = altitudeText + ' FL' + airplane.fl;
+
+
+            var infoContent = 'Flight ' + airplane.ident + '</br>' + altitudeText + '</br>' + 'From ' + airplane.origin + ' to ' + airplane.destination + '</br>' + 'Speed ' + airplane.groundspeed + ' kts heading ' + airplane.heading + ' degrees';
 
 	        // create info window content
 			var infowindow = new google.maps.InfoWindow({
-	    		content: airplane.ident
+	    		content: infoContent
 	  		});
 
 			// add marker to airport
 	        airplane.marker = new google.maps.Marker(markerOptions);
+
 
 	        // add click event to marker an associate it with the info window
 	        airplane.marker.addListener('click', function() {
@@ -337,13 +447,13 @@ var shape = {
 
 function initMap() {
 
-	var mapCentre = {lat: 43.5, lng: -79.7};
+
 
   	// Create a map object and specify the DOM element for display.
   	var map = new google.maps.Map(document.getElementById('map'), {
     	center: mapCentre,
     	//scrollwheel: false,
-    	zoom: 9
+    	zoom: MAP_ZOOM
   	});
 
 	// initialize KnockoutJS
