@@ -1080,7 +1080,7 @@ var ViewModel = function(map, airportsJSON) {
 
             success: function(result) {
                 if (result.error) {
-                    //alert('Failed to fetch flight: ' + result.error);
+                    alert('Failed to fetch flight data!');
                     return;
                 }
 
@@ -1099,11 +1099,11 @@ var ViewModel = function(map, airportsJSON) {
 
                 self.displayAirplanes();
                 if (self.allAirplanes.length === 0) {
-                    alert('Did not find any matching flights');
+                    alert('Did not find any matching flights!');
                 }
             },
             error: function(data, text) {
-                alert('Failed to fetch flight: ' + data);
+                alert('Failed to fetch flight data!');
             },
             dataType: 'jsonp',
             jsonp: 'jsonp_callback',
