@@ -12,28 +12,33 @@
 </head>
 
 <body>
-    <div class="container-fluid main-div">
+    <div class="container-fluid error-div">
+
+
         <div class="row">
-            <div class="search">
-                <div class="ham-x" id="hamburger-x" data-bind="click: clickX">
+            <div class="search" data-bind="visible: showApp">
+                <div class="ham-x" id="hamburger-x" data-bind="click: clickX, visible: showX">
                     <i class="fa fa-times-circle fa-2x"></i>
                 </div>
-                <div class="ham-o" id="hamburger-o" data-bind="click: clickO">
+                <div class="ham-o" id="hamburger-o" data-bind="click: clickO, visible: showO">
                     <i class="fa fa-bars fa-2x"></i>
                 </div>
-                <form class="form" role="search">
+                <form class="form" role="search" onsubmit="return false;">
                     <div class="form-group">
-                        <input class="form-control" type="text" data-bind="textInput: searchText" autocomplete="off" type="search" placeholder="Search for an airport">
-
+                        <input class="form-control" id="search-id" type="text" data-bind="textInput: searchText" type="search" placeholder="Search for an airport">
                     </div>
                 </form>
             </div>
-
-
         </div>
-        <div class="row">
+
+        <div class="row" data-bind="visible: showError">
+            <div class="error" data-bind="text: errorMessage">
+            </div>
+        </div>
+
+        <div class="row" data-bind="visible: showApp">
             <div class="list">
-                <ul class="list-group airport" data-bind="foreach: visibleAirports">
+                <ul class="list-group airport" data-bind="foreach: visibleAirports, visible: showAirport">
                     <li class="list-group-item" data-bind="text: displayname, click: $parent.clickEvent"></li>
                 </ul>
             </div>
@@ -44,9 +49,11 @@
 
 
     <script src="js/jQuery.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M&callback=initApp" onerror="googleError()"></script>
     <script src="js/knockout-3.4.0.js"></script>
     <script src="js/main.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M&callback=initApp" onerror="googleError()"></script>
+
+
 
 
 </body>

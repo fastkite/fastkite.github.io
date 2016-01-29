@@ -31,6 +31,7 @@ var LAT_BOTTOM = 43.0;
 var LONG_LEFT = -80.7;
 var LONG_RIGHT = -78.7;
 var MAP_ZOOM = 9;
+var MAP_ZOOMIN = 16;
 */
 
 // define the center of the map
@@ -917,9 +918,73 @@ var ViewModel = function(map, airportsJSON) {
     // save the outer this to self
     var self = this;
 
+    // determine if we should show the X or hamburger
+    self.showX = ko.observable(true);
+    self.showO = ko.observable(false);
 
+    // show/hide most everything but the error message
+    self.showApp = ko.observable(true);
 
+    // determine if we should show the airports
+    self.showAirport = ko.observable(true);
+
+    // display error messages
+    self.showError = ko.observable(false);
+    self.errorMessage = ko.observable('');
+
+    // store teh google map
     self.googleMap = map;
+
+    // create observable for the text entered during search
+    self.searchText = ko.observable('');
+
+    // only airports that are visible
+    self.visibleAirports = ko.observableArray();
+
+
+    // Create a click handler function (helps keep things clean)
+    self.clickEvent = function(airport) {
+        self.clickX();
+
+        // Zoom in a bit
+        self.googleMap.setZoom(MAP_ZOOMIN);
+
+        // Pan to coordinates
+        self.googleMap.panTo(airport.latLng);
+
+        // Open the Info Window
+        airport.launchinfo();
+    };
+
+
+    // display the hamburger and hide the airport
+    self.clickX = function() {
+        self.showX(false);
+        self.showO(true);
+        self.showAirport(false);
+
+    };
+
+
+    // display the X and display the airport
+    self.clickO = function() {
+        self.showX(true);
+        self.showO(false);
+        self.showAirport(true);
+
+    };
+
+
+    // check for google maps error and display error message if required
+    if (self.googleMap === null) {
+        self.showApp(false);
+        self.showError(true);
+        self.showAirport(false);
+        self.errorMessage = ko.observable('Google Maps API failed to load. Please try again later.');
+        return;
+    }
+
+
 
     // define a marker for airplanes
     self.airplaneImage = {
@@ -953,6 +1018,8 @@ var ViewModel = function(map, airportsJSON) {
     self.allAirports = [];
 
 
+
+
     // add airports into an array
     airportsJSON.forEach(function(airportJSON) {
         // only add airpots in our neighbourhood box
@@ -962,8 +1029,11 @@ var ViewModel = function(map, airportsJSON) {
     });
 
 
+
+
     // add markers to each airport object
     self.allAirports.forEach(function(airport) {
+
         var markerOptions = {
             map: self.googleMap, // enable the marker by default
             position: airport.latLng, // specify the location
@@ -989,14 +1059,14 @@ var ViewModel = function(map, airportsJSON) {
             airport.marker.setAnimation(google.maps.Animation.Lr);
 
             // we will create a callback to try and zoom out if the zoom level is 'zoomed in'
-            google.maps.event.addListener(infowindow,'closeclick',function(){
+            google.maps.event.addListener(infowindow, 'closeclick', function() {
                 // only if we are zoomed in
                 if (self.googleMap.zoom == MAP_ZOOMIN) {
                     // return zoom level
                     self.googleMap.setZoom(MAP_ZOOM);
                     // put the list back on the screen
                     self.clickO();
-                };
+                }
 
             });
 
@@ -1006,8 +1076,7 @@ var ViewModel = function(map, airportsJSON) {
     });
 
 
-    // only airports that are visible
-    self.visibleAirports = ko.observableArray();
+
 
     // add all the airports to the visible list of airports
     self.allAirports.forEach(function(airport) {
@@ -1015,8 +1084,7 @@ var ViewModel = function(map, airportsJSON) {
     });
 
 
-    // create observable for the text entered during search
-    self.searchText = ko.observable('');
+
 
     // setup a subscription to when self.searchText changes value
     self.searchText.subscribe(function(newValue) {
@@ -1063,6 +1131,8 @@ var ViewModel = function(map, airportsJSON) {
     self.checkForAirplanes = function() {
         //console.log('checking for airplanes');
 
+
+
         $.ajax({
             type: 'GET',
             //  http://flightaware.com/commercial/flightxml/explorer search for: SearchBirdseyeInFlight
@@ -1078,15 +1148,29 @@ var ViewModel = function(map, airportsJSON) {
                 'offset': 0
             },
 
-            success: function(result) {
-                if (result.error) {
-                    alert('Failed to fetch flight data!');
-                    return;
-                }
+            dataType: 'jsonp',
+            jsonp: 'jsonp_callback',
+            xhrFields: {
+                withCredentials: true
+            }
+        })
+
+
+        .done(function(result) {
 
                 // get the sults from the query and display to the console since FLightAware does not have a good definition for the object returned
                 //console.dir (result);
+                if (result.error == "no results") {
+                    self.showError(true);
+                    self.errorMessage('Did not find any airplanes in the area.');
 
+
+                    //alert('Did not find any airplanes in the area.');
+                    return;
+                }
+
+                self.showError(false);
+                self.errorMessage('');
 
                 var aircrafts = result.SearchBirdseyeInFlightResult.aircraft;
 
@@ -1099,24 +1183,22 @@ var ViewModel = function(map, airportsJSON) {
 
                 self.displayAirplanes();
                 if (self.allAirplanes.length === 0) {
-                    alert('Did not find any matching flights!');
+                    alert('Did not find any airplanes in the area.');
                 }
-            },
-            error: function(data, text) {
-                alert('Failed to fetch flight data!');
-            },
-            dataType: 'jsonp',
-            jsonp: 'jsonp_callback',
-            xhrFields: {
-                withCredentials: true
-            }
-        });
+            })
+            .fail(function() {
+                self.showError(true);
+                self.errorMessage('Failed to fetch flight data from FlightAware!');
+                //alert('Failed to fetch flight data from FlightAware!');
+            });
 
     };
 
     // call self.checkForAirplanes now, we will call it again later on a delay
     for (var i = 0; i < LOAD_AIRPLANES_X_TIMES; i++) {
-        setTimeout(function(){self.checkForAirplanes()}, 1000*LOAD_AIRPLANES_EVERY_X_SECONDS*i);
+        setTimeout(function() {
+            self.checkForAirplanes();
+        }, 1000 * LOAD_AIRPLANES_EVERY_X_SECONDS * i);
     }
 
 
@@ -1171,38 +1253,6 @@ var ViewModel = function(map, airportsJSON) {
         });
     };
 
-
-    // Create a click handler function (helps keep things clean)
-    self.clickEvent = function(airport) {
-        self.clickX ();
-
-        // Zoom in a bit
-        self.googleMap.setZoom(MAP_ZOOMIN);
-
-        // Pan to coordinates
-        self.googleMap.panTo(airport.latLng);
-
-        // Open the Info Window
-        airport.launchinfo();
-
-
-    };
-
-
-
-    self.clickX = function () {
-        //console.log('click-x');
-        $('#hamburger-x').css('display', 'none');
-        $('#hamburger-o').css('display', 'flex');
-        $('.airport').css('display', 'none');
-    };
-
-    self.clickO = function () {
-        //console.log('click-o');
-        $('#hamburger-o').css('display', 'none');
-        $('#hamburger-x').css('display', 'flex');
-        $('.airport').css('display', 'block');
-    };
 };
 
 
@@ -1224,7 +1274,6 @@ function initApp() {
 }
 
 function googleError() {
-       // initialize KnockoutJS
+    // initialize KnockoutJS
     ko.applyBindings(new ViewModel(null, airportsJSONGlobal));
 }
-

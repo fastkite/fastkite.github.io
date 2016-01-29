@@ -17,5 +17,7 @@ Click on an airplane to see it's ID, origin and destination, and other flight in
 
 Click the hamburger or X at the top corner of the screen to toggle the list of airports
 
+Airplane locations will be updated once a minute for 5 minutes
+
 As Ben Jaffe requested, airplanes in flight.
 

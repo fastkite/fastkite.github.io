@@ -25,7 +25,7 @@ form {
     margin-top:4px;
     width: 40px;
 
-    display: none;
+    display: flex;
 }
 
 li {
@@ -57,11 +57,24 @@ li:hover {
 
 .form-control {
     border-radius: 10px;
-    width:400;
+    width:100%;
 }
 
 .form {
     width: 100%;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom:5px;
+}
+
+
+.ui-menu .ui-menu-item a{
+    color: #96f226;
+    border-radius: 0px;
+    border: 1px solid #454545;
 }
 
 /* height media queries */
@@ -238,8 +251,6 @@ li:hover {
         width: 200px;
     }
 }
-
-
 
 
 
