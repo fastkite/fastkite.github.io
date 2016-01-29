@@ -15,10 +15,10 @@
     <div class="container-fluid main-div">
         <div class="row">
             <div class="search">
-                <div id="hamburger-x" data-bind="click: clickX">
+                <div class="ham-x" id="hamburger-x" data-bind="click: clickX">
                     <i class="fa fa-times-circle fa-2x"></i>
                 </div>
-                <div id="hamburger-o" data-bind="click: clickO">
+                <div class="ham-o" id="hamburger-o" data-bind="click: clickO">
                     <i class="fa fa-bars fa-2x"></i>
                 </div>
                 <form class="form" role="search">
@@ -37,14 +37,14 @@
                     <li class="list-group-item" data-bind="text: displayname, click: $parent.clickEvent"></li>
                 </ul>
             </div>
-            <div id="map">
+            <div id="map" class="my-map">
             </div>
         </div>
     </div>
 
 
     <script src="js/jQuery.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M&callback=initApp""></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M&callback=initApp" onerror="googleError()"></script>
     <script src="js/knockout-3.4.0.js"></script>
     <script src="js/main.js"></script>
 

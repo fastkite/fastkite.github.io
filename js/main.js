@@ -1,3 +1,5 @@
+"use strict";
+
 /* Google Maps API key */
 /* AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M */
 /* https://console.developers.google.com/apis/credentials?project=rare-theater-120212 */
@@ -42,6 +44,12 @@ var MAX_AIRPLANES = 10;
 
 // how many minutes ago must an airplane have reported in to use it's data
 var LAST_X_MINUTES = 30;
+
+// reload airplanes after this many seconds
+var LOAD_AIRPLANES_EVERY_X_SECONDS = 60;
+
+// only reload airplanes 5 times (bacause laoding airplanes costs money)
+var LOAD_AIRPLANES_X_TIMES = 5;
 
 var FXML_URL = 'http://fastkite:11917c6bed5c9ba59cb414745683ac7821a22089@flightxml.flightaware.com/json/FlightXML2/';
 
@@ -941,11 +949,8 @@ var ViewModel = function(map, airportsJSON) {
     };
 
 
-
-
     // array containing all airports
     self.allAirports = [];
-
 
 
     // add airports into an array
@@ -1055,55 +1060,64 @@ var ViewModel = function(map, airportsJSON) {
     t = t - (LAST_X_MINUTES * 60); // reported last X minutes
 
 
-    $.ajax({
-        type: 'GET',
-        //  http://flightaware.com/commercial/flightxml/explorer search for: SearchBirdseyeInFlight
-        url: FXML_URL + 'SearchBirdseyeInFlight',
+    self.checkForAirplanes = function() {
+        //console.log('checking for airplanes');
 
-        // {range lat x1 x2} {range lon y1 y2} query a specific box for airplanes range of lat and long
-        // {> lastPositionTime t} — Time when last reported position was received, or 0 if no position has been received yet. Epoch timestamp seconds since 1970.
-        // {true inAir} will verify that the airplane is still reported as in the air and not landed
+        $.ajax({
+            type: 'GET',
+            //  http://flightaware.com/commercial/flightxml/explorer search for: SearchBirdseyeInFlight
+            url: FXML_URL + 'SearchBirdseyeInFlight',
 
-        data: {
-            'query': '{range lat ' + LAT_BOTTOM + ' ' + LAT_TOP + '} {range lon ' + LONG_LEFT + ' ' + LONG_RIGHT + '} {true inAir} {> lastPositionTime ' + t + '} {> alt 0}',
-            'howMany': MAX_AIRPLANES,
-            'offset': 0
-        },
+            // {range lat x1 x2} {range lon y1 y2} query a specific box for airplanes range of lat and long
+            // {> lastPositionTime t} — Time when last reported position was received, or 0 if no position has been received yet. Epoch timestamp seconds since 1970.
+            // {true inAir} will verify that the airplane is still reported as in the air and not landed
 
-        success: function(result) {
-            if (result.error) {
-                alert('Failed to fetch flight: ' + result.error);
-                return;
+            data: {
+                'query': '{range lat ' + LAT_BOTTOM + ' ' + LAT_TOP + '} {range lon ' + LONG_LEFT + ' ' + LONG_RIGHT + '} {true inAir} {> lastPositionTime ' + t + '} {> alt 0}',
+                'howMany': MAX_AIRPLANES,
+                'offset': 0
+            },
+
+            success: function(result) {
+                if (result.error) {
+                    //alert('Failed to fetch flight: ' + result.error);
+                    return;
+                }
+
+                // get the sults from the query and display to the console since FLightAware does not have a good definition for the object returned
+                //console.dir (result);
+
+
+                var aircrafts = result.SearchBirdseyeInFlightResult.aircraft;
+
+                self.allAirplanes = []; // emty the array before loading new airplanes
+
+                aircrafts.forEach(function(aircraft) {
+
+                    self.allAirplanes.push(new AirplaneModel(aircraft));
+                });
+
+                self.displayAirplanes();
+                if (self.allAirplanes.length === 0) {
+                    alert('Did not find any matching flights');
+                }
+            },
+            error: function(data, text) {
+                alert('Failed to fetch flight: ' + data);
+            },
+            dataType: 'jsonp',
+            jsonp: 'jsonp_callback',
+            xhrFields: {
+                withCredentials: true
             }
+        });
 
-            // get the sults from the query and display to the console since FLightAware does not have a good definition for the object returned
-            //console.dir (result);
+    };
 
-
-            var aircrafts = result.SearchBirdseyeInFlightResult.aircraft;
-
-
-            aircrafts.forEach(function(aircraft) {
-
-                self.allAirplanes.push(new AirplaneModel(aircraft));
-            });
-
-            self.displayAirplanes();
-            if (self.allAirplanes.length === 0) {
-                alert('Did not find any matching flights');
-            }
-        },
-        error: function(data, text) {
-            alert('Failed to fetch flight: ' + data);
-        },
-        dataType: 'jsonp',
-        jsonp: 'jsonp_callback',
-        xhrFields: {
-            withCredentials: true
-        }
-    });
-
-
+    // call self.checkForAirplanes now, we will call it again later on a delay
+    for (var i = 0; i < LOAD_AIRPLANES_X_TIMES; i++) {
+        setTimeout(function(){self.checkForAirplanes()}, 1000*LOAD_AIRPLANES_EVERY_X_SECONDS*i);
+    }
 
 
     self.displayAirplanes = function() {
@@ -1149,7 +1163,7 @@ var ViewModel = function(map, airportsJSON) {
             // click a launchinfo functino which we will store in the airplane object for access later if needed
             airplane.launchinfo = function() {
                 infowindow.open(self.googleMap, airplane.marker);
-
+                airplane.marker.setAnimation(google.maps.Animation.Lr);
             };
 
             // add click event to marker an associate it with the info window
@@ -1177,14 +1191,14 @@ var ViewModel = function(map, airportsJSON) {
 
 
     self.clickX = function () {
-        console.log('click-x');
+        //console.log('click-x');
         $('#hamburger-x').css('display', 'none');
         $('#hamburger-o').css('display', 'flex');
         $('.airport').css('display', 'none');
     };
 
     self.clickO = function () {
-        console.log('click-o');
+        //console.log('click-o');
         $('#hamburger-o').css('display', 'none');
         $('#hamburger-x').css('display', 'flex');
         $('.airport').css('display', 'block');
@@ -1208,3 +1222,9 @@ function initApp() {
     // initialize KnockoutJS
     ko.applyBindings(new ViewModel(map, airportsJSONGlobal));
 }
+
+function googleError() {
+       // initialize KnockoutJS
+    ko.applyBindings(new ViewModel(null, airportsJSONGlobal));
+}
+
