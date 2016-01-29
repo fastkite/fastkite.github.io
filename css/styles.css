@@ -11,9 +11,24 @@ form {
     padding-bottom: 0;
 }
 
+.search {
+    display: flex;
+}
+
+#hamburger-x {
+    width: 50px;
+
+    display: flex;
+}
+#hamburger-o {
+    width: 50px;
+
+    display: none;
+}
+
 li {
     cursor: pointer;
-    opacity: 0.6;
+
 }
 
 li:hover {
@@ -21,6 +36,7 @@ li:hover {
 }
 
 .airport {
+    opacity: 0.9;
     position: absolute;
     overflow-y: auto;
     z-index: 1;
@@ -39,8 +55,12 @@ li:hover {
 
 .form-control {
     border-radius: 10px;
+    width:400;
 }
 
+.form {
+    width: 100%;
+}
 
 /* height media queries */
 @media only screen and (min-height: 975px) {
@@ -216,3 +236,8 @@ li:hover {
         width: 200px;
     };
 }
+
+
+
+
+

@@ -16,6 +16,7 @@ var LAT_BOTTOM = 43.6;
 var LONG_LEFT = -79.9;
 var LONG_RIGHT = -79.1;
 var MAP_ZOOM = 11;
+var MAP_ZOOMIN = 16;
 
 
 /* larger version of the map  that uses all the airports imported in airportsJSONGlobal */
@@ -979,6 +980,21 @@ var ViewModel = function(map, airportsJSON) {
         airport.marker = new google.maps.Marker(markerOptions);
         airport.launchinfo = function() {
             infowindow.open(self.googleMap, airport.marker);
+            // cause the icon th bounce when clicked
+            airport.marker.setAnimation(google.maps.Animation.Lr);
+
+            // we will create a callback to try and zoom out if the zoom level is 'zoomed in'
+            google.maps.event.addListener(infowindow,'closeclick',function(){
+                // only if we are zoomed in
+                if (self.googleMap.zoom == MAP_ZOOMIN) {
+                    // return zoom level
+                    self.googleMap.setZoom(MAP_ZOOM);
+                    // put the list back on the screen
+                    self.clickO();
+                };
+
+            });
+
         };
         // add click event to marker an associate it with the info window
         airport.marker.addListener('click', airport.launchinfo);
@@ -1133,6 +1149,7 @@ var ViewModel = function(map, airportsJSON) {
             // click a launchinfo functino which we will store in the airplane object for access later if needed
             airplane.launchinfo = function() {
                 infowindow.open(self.googleMap, airplane.marker);
+
             };
 
             // add click event to marker an associate it with the info window
@@ -1143,9 +1160,10 @@ var ViewModel = function(map, airportsJSON) {
 
     // Create a click handler function (helps keep things clean)
     self.clickEvent = function(airport) {
+        self.clickX ();
 
         // Zoom in a bit
-        self.googleMap.setZoom(16);
+        self.googleMap.setZoom(MAP_ZOOMIN);
 
         // Pan to coordinates
         self.googleMap.panTo(airport.latLng);
@@ -1153,20 +1171,24 @@ var ViewModel = function(map, airportsJSON) {
         // Open the Info Window
         airport.launchinfo();
 
-        // Use an IIFE to make markers dance ^_^
-        (function() {
-            if (airport.marker.getAnimation() !== null) {
-                airport.marker.setAnimation(null);
-            } else {
-                airport.marker.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(function() {
-                    airport.marker.setAnimation(null);
-                }, 700); // Default timeout that Google Maps uses for it's markers
-            }
-        })();
+
     };
 
 
+
+    self.clickX = function () {
+        console.log('click-x');
+        $('#hamburger-x').css('display', 'none');
+        $('#hamburger-o').css('display', 'flex');
+        $('.airport').css('display', 'none');
+    };
+
+    self.clickO = function () {
+        console.log('click-o');
+        $('#hamburger-o').css('display', 'none');
+        $('#hamburger-x').css('display', 'flex');
+        $('.airport').css('display', 'block');
+    };
 };
 
 
@@ -1176,22 +1198,13 @@ var ViewModel = function(map, airportsJSON) {
 function initApp() {
 
     var map;
-    if (typeof google === 'object' && typeof google.maps === 'object') {
-        // Create a map object and specify the DOM element for display.
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: mapCentre,
-            zoom: MAP_ZOOM
-        });
-    } else {
-        // if google maps cannot load, just display an error message
-        $('.main-div').empty();
-        $('.main-div').html('Error: Google Maps could not be loaded please try again later.');
-        return;
-    }
+    // Create a map object and specify the DOM element for display.
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: mapCentre,
+        zoom: MAP_ZOOM
+    });
+
 
     // initialize KnockoutJS
     ko.applyBindings(new ViewModel(map, airportsJSONGlobal));
 }
-
-// initialize the applicatino after the page is ready using jQuery
-$(initApp);
