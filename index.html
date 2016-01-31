@@ -1,61 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>UdaciFeeds</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Aviation Neighbourhood</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/styles.css">
-</head>
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,700">
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/icomoon.css">
+        <link rel="stylesheet" href="css/style.css">
 
-<body>
-    <div class="container-fluid error-div">
+        <link rel="stylesheet" href="jasmine/lib/jasmine-2.1.2/jasmine.css">
 
+        <script src="jasmine/lib/jasmine-2.1.2/jasmine.js"></script>
+        <script src="jasmine/lib/jasmine-2.1.2/jasmine-html.js"></script>
+        <script src="jasmine/lib/jasmine-2.1.2/boot.js"></script>
+    </head>
+    <body class="menu-hidden">
+        <div class="header">
+            <a href="#" class="menu-icon-link">
+                <i class="icon-list"></i>
+            </a>
 
-        <div class="row">
-            <div class="search" data-bind="visible: showApp">
-                <div class="ham-x" id="hamburger-x" data-bind="click: clickX, visible: showX">
-                    <i class="fa fa-times-circle fa-2x"></i>
-                </div>
-                <div class="ham-o" id="hamburger-o" data-bind="click: clickO, visible: showO">
-                    <i class="fa fa-bars fa-2x"></i>
-                </div>
-                <form class="form" role="search" onsubmit="return false;">
-                    <div class="form-group">
-                        <input class="form-control" id="search-id" type="text" data-bind="textInput: searchText" type="search" placeholder="Search for an airport">
-                    </div>
-                </form>
-            </div>
+            <h1 class="header-title">Feeds</h1>
         </div>
 
-        <div class="row" data-bind="visible: showError">
-            <div class="error" data-bind="text: errorMessage">
-            </div>
+        <div class="slide-menu">
+            <ul class="feed-list"></ul>
         </div>
 
-        <div class="row" data-bind="visible: showApp">
-            <div class="list">
-                <ul class="list-group airport" data-bind="foreach: visibleAirports, visible: showAirport">
-                    <li class="list-group-item" data-bind="text: displayname, click: $parent.clickEvent"></li>
-                </ul>
-            </div>
-            <div id="map" class="my-map">
-            </div>
-        </div>
-    </div>
+        <div class="feed"></div>
 
+        <script class="tpl-entry" type="text/x-handlebars-template">
+            <a class="entry-link" href="{{link}}">
+                <article class="entry">
+                    <h2>{{title}}</h2>
+                    <p>{{contentSnippet}}</p>
+                </article>
+            </a>
+        </script>
 
-    <script src="js/jQuery.js"></script>
-    <script src="js/knockout-3.4.0.js"></script>
-    <script src="js/main.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzofMQpm9GETEoAsfL6xlqkcvG9UixJ2M&callback=initApp" onerror="googleError()"></script>
+        <script class="tpl-feed-list-item" type="text/x-handlebars-template">
+            <li>
+                <a href="#" data-id="{{id}}">{{name}}</a>
+            </li>
+        </script>
 
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="http://cdn.jsdelivr.net/handlebarsjs/2.0.0/handlebars.min.js"></script>
+        <script src="http://google.com/jsapi"></script>
+        <script src="js/app.js"></script>
 
-
-
-</body>
-
+        <script src="jasmine/spec/feedreader.js"></script>
+    </body>
 </html>
