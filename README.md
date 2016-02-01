@@ -1,3 +1,17 @@
+# Using this Application
+Download from GitHub
+Install on your web server
+open /index.html in your browser
+Click on the Hamburger icon to toggle a list of news feeds
+Click on a news feed to change RSS news feeds
+
+
+# Additional Tests
+Initial Entries
+	should load at least one entry
+		Will check to verify the header is set to the RSS feed name in allFeeds[0].name
+
+
 # Project Overview
 
 In this project you are given a web-based application that reads RSS feeds. The original developer of this application clearly saw the value in testing, they've already included [Jasmine](http://jasmine.github.io/) and even started writing their first test suite! Unfortunately, they decided to move on to start their own company and we're now left with an application with an incomplete test suite. That's where you come in.
@@ -39,10 +53,5 @@ You will learn how to use Jasmine to write a number of tests against a pre-exist
 14. When complete - all of your tests should pass.
 
 
------------
 
-Additional Tests
-Initial Entries
-	should load at least one entry
-		Will check to verify the header is set to the RSS feed name in allFeeds[0].name
 
